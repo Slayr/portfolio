@@ -10,6 +10,7 @@ import { Modal } from '@/components/ui/Modal';
 import { format } from 'date-fns';
 import ReactMarkdown from 'react-markdown';
 import { extractDataImages, createImgRenderer } from '@/lib/markdown';
+import profileImage from '../public/profile.jpeg';
 
 interface Repo {
   id: number;
@@ -104,7 +105,7 @@ export default function Home() {
             className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden te-border bg-ink/5 shrink-0"
           >
             <Image
-              src="/profile.jpeg"
+              src={profileImage}
               alt="Profile Photo"
               fill
               className="object-cover"
