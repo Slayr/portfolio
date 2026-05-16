@@ -42,7 +42,7 @@ const mockRepos: Repo[] = [
   },
   {
     id: 4,
-    name: 'teenage-engineering-portfolio',
+    name: 'portfolio',
     description: 'A sleek, modern personal portfolio inspired by Teenage Engineering design ethos.',
     html_url: 'https://github.com',
     language: 'TypeScript',
