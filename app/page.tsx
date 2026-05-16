@@ -104,11 +104,10 @@ export default function Home() {
             className="relative w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden te-border bg-ink/5 shrink-0"
           >
             <Image
-              src="https://github.com/Slayr.png"
+              src="/profile.jpeg"
               alt="Profile Photo"
               fill
               className="object-cover"
-              referrerPolicy="no-referrer"
             />
           </motion.div>
 
