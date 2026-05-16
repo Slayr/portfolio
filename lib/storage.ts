@@ -80,8 +80,12 @@ export const savePost = async (
   post: Omit<Post, 'id' | 'createdAt'>
 ): Promise<Post> => {
   const db = getDb();
+  // Strip undefined fields – Firestore rejects them
+  const cleanPost = Object.fromEntries(
+    Object.entries(post).filter(([, v]) => v !== undefined)
+  );
   const docRef = await addDoc(collection(db, 'posts'), {
-    ...post,
+    ...cleanPost,
     createdAt: Timestamp.now(),
   });
   return {
