@@ -5,12 +5,6 @@ import { Briefcase, Download } from 'lucide-react';
 
 const experiences = [
   {
-    role: "Research Collaborator",
-    company: "Google User Research (Remote)",
-    duration: "Jan 2025 - Present",
-    summary: "Collaborated with Google's user research team to evaluate early-stage app prototypes, providing data-driven feedback.",
-  },
-  {
     role: "SDE Intern",
     company: "Stratbeans (Gurugram)",
     duration: "July 2024 - Dec 2024",
