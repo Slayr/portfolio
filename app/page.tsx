@@ -195,44 +195,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Latest Blog Posts */}
-      <section className="space-y-8 mt-12">
-        <div className="flex items-center justify-between te-border-b pb-6">
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase flex items-center gap-4">
-            <BookOpen size={36} className="text-accent" />
-            Latest Transmissions
-          </h2>
-          <Link href="/blog" className="te-label hover:text-accent flex items-center gap-1 font-bold">
-            Read All <ArrowRight size={14} />
-          </Link>
-        </div>
+      {/* Latest Blog Posts - only shown when posts exist */}
+      {posts.length > 0 && (
+        <section className="space-y-8 mt-12">
+          <div className="flex items-center justify-between te-border-b pb-6">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase flex items-center gap-4">
+              <BookOpen size={36} className="text-accent" />
+              Latest Transmissions
+            </h2>
+            <Link href="/blog" className="te-label hover:text-accent flex items-center gap-1 font-bold">
+              Read All <ArrowRight size={14} />
+            </Link>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {posts.map((post, i) => (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="te-card p-6 cursor-pointer flex flex-col h-full"
-              onClick={() => setSelectedPost(post)}
-            >
-              <h3 className="font-bold text-lg mb-2 line-clamp-2">{post.title}</h3>
-              <div className="mt-auto pt-4 te-border-t">
-                <span className="te-label">
-                  {post.createdAt ? format(new Date(post.createdAt), 'MMM dd, yyyy') : 'Recently'}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-          {posts.length === 0 && (
-            <div className="col-span-3 py-12 text-center te-label border border-dashed border-line rounded-2xl">
-              No blog posts yet.
-            </div>
-          )}
-        </div>
-      </section>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {posts.map((post, i) => (
+              <motion.div
+                key={post.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: 0.4, delay: i * 0.1 }}
+                className="te-card p-6 cursor-pointer flex flex-col h-full"
+                onClick={() => setSelectedPost(post)}
+              >
+                <h3 className="font-bold text-lg mb-2 line-clamp-2">{post.title}</h3>
+                <div className="mt-auto pt-4 te-border-t">
+                  <span className="te-label">
+                    {post.createdAt ? format(new Date(post.createdAt), 'MMM dd, yyyy') : 'Recently'}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Modals */}
       <Modal

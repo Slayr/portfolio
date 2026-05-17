@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -10,7 +11,6 @@ const navItems = [
   { name: 'Skills', path: '/skills' },
   { name: 'Experience', path: '/experience' },
   { name: 'Education', path: '/education' },
-  { name: 'Blog', path: '/blog' },
   { name: 'Photography', path: '/photography' },
   { name: 'Contact', path: '/contact' },
   { name: 'Admin', path: '/admin' },
@@ -18,6 +18,7 @@ const navItems = [
 
 export function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (isOpen) {
@@ -87,7 +88,11 @@ export function MobileMenu() {
                   >
                     <Link 
                       href={item.path}
-                      className="text-4xl font-black tracking-tighter uppercase hover:text-accent transition-colors"
+                      className={`text-4xl font-black tracking-tighter uppercase transition-colors ${
+                        pathname === item.path || pathname.startsWith(item.path + '/')
+                          ? 'text-accent-orange'
+                          : 'hover:text-accent'
+                      }`}
                       onClick={() => setIsOpen(false)}
                     >
                       {item.name}

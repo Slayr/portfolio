@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { NavLinks } from '@/components/NavLinks';
 import { MobileMenu } from '@/components/MobileMenu';
 import { InteractiveBackground } from '@/components/InteractiveBackground';
 import { Home } from 'lucide-react';
@@ -46,25 +47,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
               <Link href="/" className="group flex items-center justify-center p-2 rounded-lg bg-ink/5 hover:bg-ink/10 transition-colors">
                 <Home size={24} className="text-ink group-hover:text-accent-orange transition-colors" />
               </Link>
-              <nav className="hidden md:flex items-center gap-8">
-                {[
-                  { name: 'Projects', path: '/projects' },
-                  { name: 'Skills', path: '/skills' },
-                  { name: 'Experience', path: '/experience' },
-                  { name: 'Education', path: '/education' },
-                  { name: 'Blog', path: '/blog' },
-                  { name: 'Photography', path: '/photography' },
-                  { name: 'Contact', path: '/contact' },
-                ].map((item) => (
-                  <Link 
-                    key={item.name} 
-                    href={item.path}
-                    className="text-sm font-medium text-ink/70 hover:text-ink transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
+              <NavLinks />
               <div className="flex items-center gap-4">
                 <ThemeToggle />
                 <Link href="/admin" className="te-button hidden md:inline-flex">

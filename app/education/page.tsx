@@ -5,11 +5,11 @@ import { GraduationCap, Award, Users } from 'lucide-react';
 
 const education = [
   {
-    degree: "M.Sc in Data Science",
-    school: "Manipal Academy of Higher Education – PSPH",
-    status: "In Progress",
-    duration: "July 2025 - Present",
-    details: "Manipal, Karnataka.",
+    degree: "IB Diploma Programme",
+    school: "Pathways World School",
+    status: "Completed",
+    duration: "2011 - 2021",
+    details: "Gurugram, Haryana.",
   },
   {
     degree: "B.Tech in Computer Science Engineering",
@@ -19,12 +19,12 @@ const education = [
     details: "Specialization in AI & ML. Gurugram, Haryana.",
   },
   {
-    degree: "IB Diploma Programme",
-    school: "Pathways World School",
-    status: "Completed",
-    duration: "2011 - 2021",
-    details: "Gurugram, Haryana.",
-  }
+    degree: "M.Sc in Data Science",
+    school: "Manipal Academy of Higher Education – PSPH",
+    status: "In Progress",
+    duration: "July 2025 - Present",
+    details: "Manipal, Karnataka.",
+  },
 ];
 
 const certifications = [
