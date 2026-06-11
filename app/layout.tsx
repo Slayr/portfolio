@@ -30,6 +30,11 @@ export const metadata: Metadata = {
     locale: 'en_US',
   },
   metadataBase: new URL('https://slayr.github.io'),
+  icons: {
+    icon: '/profile.png',
+    shortcut: '/profile.png',
+    apple: '/profile.png',
+  },
 };
 
 export default function RootLayout({children}: {children: React.ReactNode}) {
