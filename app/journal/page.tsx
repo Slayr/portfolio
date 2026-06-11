@@ -13,8 +13,9 @@ export default function JournalPage() {
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   useEffect(() => {
-    Promise.resolve().then(() => {
-      setPosts(fetchAllPosts());
+    Promise.resolve().then(async () => {
+      const postsData = await fetchAllPosts();
+      setPosts(postsData);
     });
   }, []);
 

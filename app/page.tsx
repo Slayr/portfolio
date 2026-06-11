@@ -39,9 +39,11 @@ export default function Home() {
 
   // Load local posts and photos on mount (client-side only to avoid SSR mismatches)
   useEffect(() => {
-    Promise.resolve().then(() => {
-      setPosts(fetchAllPosts());
-      setPhotos(fetchAllPhotos());
+    Promise.resolve().then(async () => {
+      const postsData = await fetchAllPosts();
+      const photosData = await fetchAllPhotos();
+      setPosts(postsData);
+      setPhotos(photosData);
       setSkills(fetchAllSkills());
     });
   }, []);

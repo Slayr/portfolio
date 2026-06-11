@@ -12,8 +12,9 @@ export default function PhotosPage() {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   useEffect(() => {
-    Promise.resolve().then(() => {
-      setPhotos(fetchAllPhotos());
+    Promise.resolve().then(async () => {
+      const photosData = await fetchAllPhotos();
+      setPhotos(photosData);
     });
   }, []);
 

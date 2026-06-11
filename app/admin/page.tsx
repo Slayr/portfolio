@@ -279,7 +279,7 @@ export default function Admin() {
         if (!title || !content) throw new Error('Title and content required');
         const finalContent = resolveInlineImages(content);
         
-        savePost({
+        await savePost({
           title,
           content: finalContent,
           imageUrl: imageUrl || undefined,
@@ -296,7 +296,7 @@ export default function Admin() {
         if (pendingPhotos.length === 0) throw new Error('No photos to upload');
         if (pendingPhotos.some(p => !p.title)) throw new Error('All photos must have a title');
         
-        savePhotos(pendingPhotos.map(p => ({
+        await savePhotos(pendingPhotos.map(p => ({
           title: p.title,
           description: p.description,
           url: p.url,
