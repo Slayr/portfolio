@@ -42,6 +42,21 @@ export default function Admin() {
   const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null); // holds metadata of photo currently being edited
   const [editPhotoTitle, setEditPhotoTitle] = useState('');
   const [editPhotoDescription, setEditPhotoDescription] = useState('');
+  const [fbUser, setFbUser] = useState<any>(null);
+
+  // Listen to Firebase Auth state changes
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      const auth = getFirebaseAuth();
+      if (auth) {
+        import('firebase/auth').then(({ onAuthStateChanged }) => {
+          onAuthStateChanged(auth, (user) => {
+            setFbUser(user);
+          });
+        });
+      }
+    }
+  }, []);
 
   // Skills state
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -562,11 +577,31 @@ export default function Admin() {
               <span className="text-neo-cyan animate-pulse">LIVE</span>
             </h3>
             <div className="space-y-1.5 text-[9px] font-bold">
-              <div className="flex justify-between"><span className="text-neutral-500">AUTH STATE:</span> <span className="text-neo-green">AUTHORIZED</span></div>
-              <div className="flex justify-between"><span className="text-neutral-500">ENCRYPTION:</span> <span className="text-neo-cyan">NATIVE_SHA_256</span></div>
-              <div className="flex justify-between"><span className="text-neutral-500">STORAGE:</span> <span className="text-neo-yellow">LOCAL_INDEXDB_SIM</span></div>
-              <div className="flex justify-between"><span className="text-neutral-500">STAGED PHOTOS:</span> <span>{pendingPhotos.length}</span></div>
-              <div className="flex justify-between"><span className="text-neutral-500">ACTIVE SKILLS:</span> <span>{skills.length}</span></div>
+              <div className="flex justify-between"><span className="text-neutral-500">LOCAL AUTH:</span> <span className="text-neo-green font-black">AUTHORIZED</span></div>
+              <div className="flex justify-between">
+                <span className="text-neutral-500">DATABASE AUTH:</span> 
+                {fbUser ? (
+                  <span className={fbUser.isAnonymous ? "text-neo-orange font-black" : "text-neo-green font-black"}>
+                    {fbUser.isAnonymous ? "ANONYMOUS_OK" : "CLOUD_SECURE"}
+                  </span>
+                ) : (
+                  <span className="text-red-500 font-black">UNAUTHENTICATED</span>
+                )}
+              </div>
+              {fbUser && fbUser.email && (
+                <div className="flex justify-between">
+                  <span className="text-neutral-500">CLOUD USER:</span> 
+                  <span className="text-neo-cyan font-black truncate max-w-[100px]">{fbUser.email}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-neutral-500">STORAGE MODE:</span> 
+                <span className={isFirebaseConfigured() ? "text-neo-cyan font-black" : "text-neo-yellow font-black"}>
+                  {isFirebaseConfigured() ? "REMOTE_FIRESTORE" : "LOCAL_BROWSER"}
+                </span>
+              </div>
+              <div className="flex justify-between"><span className="text-neutral-500">STAGED PHOTOS:</span> <span className="text-white font-black">{pendingPhotos.length}</span></div>
+              <div className="flex justify-between"><span className="text-neutral-500">ACTIVE SKILLS:</span> <span className="text-white font-black">{skills.length}</span></div>
             </div>
           </div>
 
