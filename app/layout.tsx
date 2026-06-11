@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://slayr.github.io'),
   icons: {
-    icon: '/profile.png',
-    shortcut: '/profile.png',
-    apple: '/profile.png',
+    icon: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/profile.png`,
+    shortcut: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/profile.png`,
+    apple: `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/profile.png`,
   },
 };
 

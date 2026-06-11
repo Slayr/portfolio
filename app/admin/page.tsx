@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import { extractDataImages } from '@/lib/markdown';
 import { savePost, savePhotos, fetchAllSkills, saveSkill, deleteSkill } from '@/lib/storage';
 import { Skill } from '@/lib/data';
+import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase';
 
 const SECURE_PASS_HASHES = [
   'b75b9de0c93a0a38f32a76f26487e416d8a39a2f7c00e6a1005a305e55ff16bd', // slayr2026
@@ -89,15 +90,42 @@ export default function Admin() {
     if (lockoutTime > 0) return;
 
     setLoginError('');
-    addLog(`ATTEMPTING LOGIN FOR USER: "${username}"`);
+    addLog(`ATTEMPTING AUTHENTICATION FOR: "${username}"`);
 
     try {
+      // 1. If username is an email and Firebase is configured, attempt Firebase Auth sign-in
+      if (username.includes('@') && isFirebaseConfigured()) {
+        const authInstance = getFirebaseAuth();
+        if (authInstance) {
+          addLog('CONNECTING TO FIREBASE AUTH SERVICES...');
+          const { signInWithEmailAndPassword } = await import('firebase/auth');
+          await signInWithEmailAndPassword(authInstance, username, password);
+          setIsAuthenticated(true);
+          setPassword('');
+          addLog('FIREBASE SYSTEM AUTHENTICATION SECURED. ACCESS GRANTED.');
+          return;
+        }
+      }
+
+      // 2. Otherwise fall back to local passcode hashing check
       const hashedInput = await hashPassword(password);
       
       if (username === 'admin' && SECURE_PASS_HASHES.includes(hashedInput)) {
+        if (isFirebaseConfigured()) {
+          const authInstance = getFirebaseAuth();
+          if (authInstance) {
+            try {
+              const { signInAnonymously } = await import('firebase/auth');
+              await signInAnonymously(authInstance);
+              addLog('ANONYMOUS STORAGE SECURITY CLEARANCE GRANTED.');
+            } catch (err: any) {
+              addLog('ANONYMOUS AUTH REJECTED. WRITE PERMISSIONS MAY BE RESTRICTED.');
+            }
+          }
+        }
         setIsAuthenticated(true);
         setPassword('');
-        addLog('AUTHORIZATION SECURED. ACCESS GRANTED.');
+        addLog('LOCAL SYSTEM SECURITY CLEARANCE GRANTED. ACCESS GRANTED.');
       } else {
         const nextAttempts = loginAttempts + 1;
         setLoginAttempts(nextAttempts);
@@ -112,13 +140,26 @@ export default function Admin() {
           setLoginError('Invalid credentials.');
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setLoginError('Verification process failed.');
+      setLoginError(err.message || 'Verification process failed.');
+      addLog(`AUTHENTICATION ERROR: ${err.message || 'UNKNOWN'}`);
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isFirebaseConfigured()) {
+      const authInstance = getFirebaseAuth();
+      if (authInstance) {
+        try {
+          const { signOut } = await import('firebase/auth');
+          await signOut(authInstance);
+          addLog('FIREBASE AUTHENTICATION CLOSED.');
+        } catch (err) {
+          console.error('Signout error', err);
+        }
+      }
+    }
     setIsAuthenticated(false);
     setUsername('');
     setSysLogs([
@@ -345,13 +386,13 @@ export default function Admin() {
             )}
             
             <div className="space-y-2">
-              <label className="text-[10px] text-neutral-400 block uppercase font-bold">Operator ID</label>
+              <label className="text-[10px] text-neutral-400 block uppercase font-bold">Operator ID / Email</label>
               <input 
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-neutral-900 border-2 border-neutral-800 focus:border-neo-green p-3 font-mono text-xs font-bold text-neo-green focus:outline-none rounded"
-                placeholder="e.g. admin"
+                placeholder="e.g. admin or operator@domain.com"
                 disabled={lockoutTime > 0}
                 required
               />
