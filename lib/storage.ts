@@ -7,6 +7,7 @@ import {
   query,
   orderBy,
   Timestamp,
+  updateDoc,
 } from 'firebase/firestore';
 import { getDb, isFirebaseConfigured } from './firebase';
 import { Post, Photo, Skill, mockPosts, mockPhotos, cvSkills } from './data';
@@ -34,6 +35,42 @@ const saveLocalStorageItem = <T>(key: string, item: T): void => {
   if (!isClient) return;
   const all = getLocalStorageItems<T>(key, []);
   localStorage.setItem(key, JSON.stringify([item, ...all]));
+};
+
+// --- Firebase Update Methods ---
+
+export const updatePost = async (id: string, post: Partial<Post>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    if (!isClient) return;
+    const all = getLocalStorageItems<Post>('portfolio_posts', mockPosts);
+    const updated = all.map(p => p.id === id ? { ...p, ...post } : p);
+    localStorage.setItem('portfolio_posts', JSON.stringify(updated));
+    return;
+  }
+  const db = getDb();
+  if (!db) throw new Error('Database not initialized');
+  const cleanPost = Object.fromEntries(
+    Object.entries(post).filter(([, v]) => v !== undefined && v !== null)
+  );
+  const docRef = doc(db, 'posts', id);
+  await updateDoc(docRef, cleanPost);
+};
+
+export const updatePhoto = async (id: string, photo: Partial<Photo>): Promise<void> => {
+  if (!isFirebaseConfigured()) {
+    if (!isClient) return;
+    const all = getLocalStorageItems<Photo>('portfolio_photos', mockPhotos);
+    const updated = all.map(p => p.id === id ? { ...p, ...photo } : p);
+    localStorage.setItem('portfolio_photos', JSON.stringify(updated));
+    return;
+  }
+  const db = getDb();
+  if (!db) throw new Error('Database not initialized');
+  const cleanPhoto = Object.fromEntries(
+    Object.entries(photo).filter(([, v]) => v !== undefined && v !== null)
+  );
+  const docRef = doc(db, 'photos', id);
+  await updateDoc(docRef, cleanPhoto);
 };
 
 // --- Firebase Firestore / LocalStorage CRUD for Posts ---

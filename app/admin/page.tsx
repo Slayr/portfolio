@@ -9,8 +9,11 @@ import {
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import { extractDataImages } from '@/lib/markdown';
-import { savePost, savePhotos, fetchAllSkills, saveSkill, deleteSkill } from '@/lib/storage';
-import { Skill } from '@/lib/data';
+import { 
+  savePost, savePhotos, fetchAllSkills, saveSkill, deleteSkill,
+  fetchAllPosts, fetchAllPhotos, deletePost, deletePhoto, updatePost, updatePhoto 
+} from '@/lib/storage';
+import { Skill, Post, Photo } from '@/lib/data';
 import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase';
 
 const SECURE_PASS_HASHES = [
@@ -30,7 +33,15 @@ export default function Admin() {
   const [lockoutTime, setLockoutTime] = useState(0);
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<'blog' | 'photo' | 'skills'>('blog');
+  const [activeTab, setActiveTab] = useState<'blog' | 'photo' | 'skills' | 'manage-blog' | 'manage-photo'>('blog');
+
+  // Management lists and editing states
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [allPhotos, setAllPhotos] = useState<Photo[]>([]);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editingPhoto, setEditingPhoto] = useState<Photo | null>(null); // holds metadata of photo currently being edited
+  const [editPhotoTitle, setEditPhotoTitle] = useState('');
+  const [editPhotoDescription, setEditPhotoDescription] = useState('');
 
   // Skills state
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -168,13 +179,28 @@ export default function Admin() {
     ]);
   };
 
+  const loadPostsAndPhotos = async () => {
+    try {
+      const postsData = await fetchAllPosts();
+      const photosData = await fetchAllPhotos();
+      setAllPosts(postsData);
+      setAllPhotos(photosData);
+      addLog('DATABASE SYNCHRONIZED [BLOGS & PHOTOS].');
+    } catch (err) {
+      console.error('Failed to load posts/photos', err);
+      addLog('ERROR CONNECTING TO CENTRAL ARCHIVES.');
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
-      Promise.resolve().then(() => {
+      Promise.resolve().then(async () => {
         setSkills(fetchAllSkills());
         addLog('SKILLS DATABASE SYNCHRONIZED.');
+        await loadPostsAndPhotos();
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const handleAddSkill = (e: React.FormEvent) => {
@@ -203,6 +229,66 @@ export default function Admin() {
       setPublishMessage(`Skill "${label}" deleted successfully!`);
     } catch (err: any) {
       setPublishMessage(`Error: ${err.message || 'Failed to delete skill'}`);
+    }
+  };
+
+  const handleEditPost = (post: Post) => {
+    setEditingPostId(post.id);
+    setTitle(post.title);
+    setContent(post.content);
+    setImageUrl(post.imageUrl || '');
+    setActiveTab('blog');
+    addLog(`LOADING POST "${post.title}" INTO CANVAS.`);
+  };
+
+  const handleDeletePost = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this transmission log?')) return;
+    try {
+      addLog(`DELETING POST: ${id.toUpperCase()}`);
+      await deletePost(id);
+      addLog(`POST ${id.toUpperCase()} DELETED.`);
+      await loadPostsAndPhotos();
+    } catch (err: any) {
+      console.error(err);
+      addLog(`ERROR DELETING POST: ${err.message}`);
+    }
+  };
+
+  const handleEditPhoto = (photo: Photo) => {
+    setEditingPhoto(photo);
+    setEditPhotoTitle(photo.title);
+    setEditPhotoDescription(photo.description || '');
+    addLog(`LOADING PHOTO METADATA "${photo.title}".`);
+  };
+
+  const handleSavePhotoMetadata = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPhoto) return;
+    try {
+      addLog(`UPDATING PHOTO METADATA: ${editingPhoto.id.toUpperCase()}`);
+      await updatePhoto(editingPhoto.id, {
+        title: editPhotoTitle,
+        description: editPhotoDescription,
+      });
+      addLog(`PHOTO METADATA DEPLOYED.`);
+      setEditingPhoto(null);
+      await loadPostsAndPhotos();
+    } catch (err: any) {
+      console.error(err);
+      addLog(`ERROR UPDATING PHOTO: ${err.message}`);
+    }
+  };
+
+  const handleDeletePhoto = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this photographic capture?')) return;
+    try {
+      addLog(`DELETING PHOTO: ${id.toUpperCase()}`);
+      await deletePhoto(id);
+      addLog(`PHOTO ${id.toUpperCase()} DELETED.`);
+      await loadPostsAndPhotos();
+    } catch (err: any) {
+      console.error(err);
+      addLog(`ERROR DELETING PHOTO: ${err.message}`);
     }
   };
 
@@ -320,19 +406,31 @@ export default function Admin() {
         if (!title || !content) throw new Error('Title and content required');
         const finalContent = resolveInlineImages(content);
         
-        await savePost({
-          title,
-          content: finalContent,
-          imageUrl: imageUrl || undefined,
-        });
+        if (editingPostId) {
+          await updatePost(editingPostId, {
+            title,
+            content: finalContent,
+            imageUrl: imageUrl || undefined,
+          });
+          setPublishMessage('Log entry updated successfully!');
+          addLog(`LOG ENTRY "${title}" UPDATED SUCCESSFULLY.`);
+          setEditingPostId(null);
+        } else {
+          await savePost({
+            title,
+            content: finalContent,
+            imageUrl: imageUrl || undefined,
+          });
+          setPublishMessage('Log entry broadcasted to Journal feed!');
+          addLog('LOG ENTRY DEPLOYED SUCCESSFULLY.');
+        }
         
-        setPublishMessage('Log entry broadcasted to Journal feed!');
-        addLog('LOG ENTRY DEPLOYED SUCCESSFULLY.');
         setTitle('');
         setContent('');
         setImageUrl('');
         setInlineImages([]);
-        setTimeout(() => router.push('/'), 1500);
+        await loadPostsAndPhotos();
+        setTimeout(() => setActiveTab('manage-blog'), 1500);
       } else {
         if (pendingPhotos.length === 0) throw new Error('No photos to upload');
         if (pendingPhotos.some(p => !p.title)) throw new Error('All photos must have a title');
@@ -346,7 +444,8 @@ export default function Admin() {
         setPublishMessage(`Successfully committed ${pendingPhotos.length} capture(s)!`);
         addLog(`${pendingPhotos.length} CAPTURES STORED IN SYSTEM FILE.`);
         setPendingPhotos([]);
-        setTimeout(() => router.push('/'), 1500);
+        await loadPostsAndPhotos();
+        setTimeout(() => setActiveTab('manage-photo'), 1500);
       }
     } catch (error: any) {
       console.error('Publish error', error);
@@ -489,28 +588,48 @@ export default function Admin() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex gap-3 border-b-4 border-black pb-3 overflow-x-auto">
             <button 
-              onClick={() => { setActiveTab('blog'); setPublishMessage(''); }}
-              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 ${
+              onClick={() => { setActiveTab('blog'); setPublishMessage(''); setEditingPostId(null); }}
+              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 whitespace-nowrap ${
                 activeTab === 'blog' 
                   ? 'bg-neo-pink text-white border-black shadow-[3px_3px_0px_0px_#000] -translate-y-0.5' 
                   : 'bg-glass border-black hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#000]'
               }`}
             >
-              Create Transmission log
+              {editingPostId ? 'Edit Log Entry' : 'Create Log Entry'}
             </button>
             <button 
               onClick={() => { setActiveTab('photo'); setPublishMessage(''); }}
-              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 ${
+              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 whitespace-nowrap ${
                 activeTab === 'photo' 
                   ? 'bg-neo-pink text-white border-black shadow-[3px_3px_0px_0px_#000] -translate-y-0.5' 
                   : 'bg-glass border-black hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#000]'
               }`}
             >
-              Upload Photographic Capture
+              Upload Photos
+            </button>
+            <button 
+              onClick={() => { setActiveTab('manage-blog'); setPublishMessage(''); }}
+              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 whitespace-nowrap ${
+                activeTab === 'manage-blog' 
+                  ? 'bg-neo-pink text-white border-black shadow-[3px_3px_0px_0px_#000] -translate-y-0.5' 
+                  : 'bg-glass border-black hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#000]'
+              }`}
+            >
+              Manage Logs
+            </button>
+            <button 
+              onClick={() => { setActiveTab('manage-photo'); setPublishMessage(''); }}
+              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 whitespace-nowrap ${
+                activeTab === 'manage-photo' 
+                  ? 'bg-neo-pink text-white border-black shadow-[3px_3px_0px_0px_#000] -translate-y-0.5' 
+                  : 'bg-glass border-black hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#000]'
+              }`}
+            >
+              Manage Photos
             </button>
             <button 
               onClick={() => { setActiveTab('skills'); setPublishMessage(''); }}
-              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 ${
+              className={`te-button py-2 px-5 text-xs font-black uppercase transition-all duration-100 whitespace-nowrap ${
                 activeTab === 'skills' 
                   ? 'bg-neo-pink text-white border-black shadow-[3px_3px_0px_0px_#000] -translate-y-0.5' 
                   : 'bg-glass border-black hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_#000]'
@@ -604,6 +723,177 @@ export default function Admin() {
                 })}
               </div>
             </div>
+          ) : activeTab === 'manage-blog' ? (
+            <div className="te-card p-6 bg-glass border-4 border-black text-ink shadow-[8px_8px_0px_0px_#000] space-y-6">
+              <div className="border-b-2 border-dashed border-black/20 pb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black uppercase text-ink flex items-center gap-2">
+                    <Database size={16} className="text-neo-pink" />
+                    All Transmission Logs ({allPosts.length})
+                  </h3>
+                  <p className="text-[9px] text-neutral-500 font-mono mt-1">SELECT TRANS-LOG TO INITIATE RE-COMPILE OR DE-ORBIT ACTIONS.</p>
+                </div>
+                <button
+                  onClick={() => { setActiveTab('blog'); setPublishMessage(''); setEditingPostId(null); setTitle(''); setContent(''); setImageUrl(''); }}
+                  className="py-1.5 px-3 border-2 border-black bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow text-[10px] font-black uppercase cursor-pointer rounded shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1"
+                >
+                  <Plus size={12} /> NEW TRANS-LOG
+                </button>
+              </div>
+
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                {allPosts.map((post) => (
+                  <div key={post.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-2 border-black rounded bg-bg shadow-[3px_3px_0px_0px_#000] gap-4">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-sans font-black text-sm uppercase truncate text-ink">{post.title}</h4>
+                      <div className="flex items-center gap-2 mt-1.5 font-mono text-[9px] text-neutral-500 uppercase">
+                        <span>ID: {post.id}</span>
+                        <span>•</span>
+                        <span>DATE: {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'UNKNOWN'}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 font-mono">
+                      <button
+                        onClick={() => handleEditPost(post)}
+                        className="py-1.5 px-3 border-2 border-black bg-neo-cyan text-black hover:bg-black hover:text-neo-cyan text-[10px] font-black uppercase cursor-pointer rounded transition-colors"
+                      >
+                        EDIT
+                      </button>
+                      <button
+                        onClick={() => handleDeletePost(post.id)}
+                        className="py-1.5 px-3 border-2 border-black bg-red-500 text-white hover:bg-black hover:text-red-500 text-[10px] font-black uppercase cursor-pointer rounded transition-colors"
+                      >
+                        DELETE
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {allPosts.length === 0 && (
+                  <div className="py-8 text-center text-xs font-mono text-neutral-500 uppercase border border-dashed border-neutral-300 rounded">
+                    NO DISPATCHES LOADED IN LOCAL TELEMETRY BUFFER.
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : activeTab === 'manage-photo' ? (
+            <div className="te-card p-6 bg-glass border-4 border-black text-ink shadow-[8px_8px_0px_0px_#000] space-y-6">
+              <div className="border-b-2 border-dashed border-black/20 pb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black uppercase text-ink flex items-center gap-2">
+                    <Camera size={16} className="text-neo-pink" />
+                    All Photographic Captures ({allPhotos.length})
+                  </h3>
+                  <p className="text-[9px] text-neutral-500 font-mono mt-1">SELECT CAPTURE TO ADJUST METADATA OR REMOVE FROM ACTIVE INDEX.</p>
+                </div>
+                <button
+                  onClick={() => { setActiveTab('photo'); setPublishMessage(''); }}
+                  className="py-1.5 px-3 border-2 border-black bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow text-[10px] font-black uppercase cursor-pointer rounded shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-1"
+                >
+                  <Plus size={12} /> ADD PHOTOS
+                </button>
+              </div>
+
+              <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                {allPhotos.map((photo) => (
+                  <div key={photo.id} className="flex flex-col sm:flex-row sm:items-start justify-between p-4 border-2 border-black rounded bg-bg shadow-[3px_3px_0px_0px_#000] gap-4">
+                    <div className="flex gap-4 min-w-0">
+                      <div className="w-16 h-16 shrink-0 border border-black overflow-hidden bg-neutral-900 rounded relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={photo.url} alt={photo.title} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="font-sans font-black text-sm uppercase truncate text-ink">{photo.title}</h4>
+                        {photo.description && (
+                          <p className="text-[10px] text-neutral-500 truncate mt-1 leading-normal max-w-[280px] sm:max-w-md">{photo.description}</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-2 font-mono text-[8px] text-neutral-500 uppercase">
+                          <span>ID: {photo.id}</span>
+                          <span>•</span>
+                          <span>DATE: {photo.createdAt ? new Date(photo.createdAt).toLocaleDateString() : 'UNKNOWN'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 font-mono self-center">
+                      <button
+                        onClick={() => handleEditPhoto(photo)}
+                        className="py-1.5 px-3 border-2 border-black bg-neo-cyan text-black hover:bg-black hover:text-neo-cyan text-[10px] font-black uppercase cursor-pointer rounded transition-colors"
+                      >
+                        EDIT
+                      </button>
+                      <button
+                        onClick={() => handleDeletePhoto(photo.id)}
+                        className="py-1.5 px-3 border-2 border-black bg-red-500 text-white hover:bg-black hover:text-red-500 text-[10px] font-black uppercase cursor-pointer rounded transition-colors"
+                      >
+                        DELETE
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {allPhotos.length === 0 && (
+                  <div className="py-8 text-center text-xs font-mono text-neutral-500 uppercase border border-dashed border-neutral-300 rounded">
+                    NO PHOTOGRAPHIC RECORDS DETECTED IN STORAGE BUFFER.
+                  </div>
+                )}
+              </div>
+
+              {/* Photo metadata editing overlay modal */}
+              {editingPhoto && (
+                <div className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="te-card p-6 bg-glass border-4 border-black text-ink shadow-[8px_8px_0px_0px_#000] w-full max-w-lg space-y-4">
+                    <div className="border-b-2 border-black pb-2 flex justify-between items-center">
+                      <h3 className="font-sans font-black text-base uppercase">Edit Capture Metadata</h3>
+                      <button 
+                        onClick={() => setEditingPhoto(null)} 
+                        className="text-red-500 font-bold hover:text-black font-mono text-sm cursor-pointer"
+                      >
+                        [CLOSE]
+                      </button>
+                    </div>
+                    <div className="w-full h-36 border border-black overflow-hidden bg-neutral-900 relative rounded">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={editingPhoto.url} alt={editingPhoto.title} className="w-full h-full object-contain" />
+                    </div>
+                    <form onSubmit={handleSavePhotoMetadata} className="space-y-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-neutral-400">Capture Title</label>
+                        <input
+                          type="text"
+                          value={editPhotoTitle}
+                          onChange={(e) => setEditPhotoTitle(e.target.value)}
+                          className="w-full bg-bg border-2 border-black p-2 font-black text-xs focus:outline-none rounded"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-neutral-400">Context/Description</label>
+                        <textarea
+                          value={editPhotoDescription}
+                          onChange={(e) => setEditPhotoDescription(e.target.value)}
+                          rows={3}
+                          className="w-full bg-bg border-2 border-black p-2 font-mono text-[10px] focus:outline-none resize-y rounded"
+                          placeholder="Provide details about this capture..."
+                        />
+                      </div>
+                      <div className="pt-2 flex justify-end gap-2.5 font-mono">
+                        <button
+                          type="button"
+                          onClick={() => setEditingPhoto(null)}
+                          className="py-2 px-4 border-2 border-black bg-white text-black hover:bg-black hover:text-white text-xs font-black uppercase cursor-pointer rounded transition-colors"
+                        >
+                          CANCEL
+                        </button>
+                        <button
+                          type="submit"
+                          className="py-2 px-4 border-2 border-black bg-neo-green text-black hover:bg-black hover:text-neo-green text-xs font-black uppercase cursor-pointer rounded transition-colors shadow-[2px_2px_0px_0px_#000]"
+                        >
+                          COMMIT METADATA
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <motion.form 
               key={activeTab}
@@ -625,7 +915,26 @@ export default function Admin() {
               {activeTab === 'blog' ? (
                 <>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black uppercase text-neutral-400">Dispatch Title</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-black uppercase text-neutral-400">Dispatch Title</label>
+                      {editingPostId && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingPostId(null);
+                            setTitle('');
+                            setContent('');
+                            setImageUrl('');
+                            setInlineImages([]);
+                            addLog('DISCARDED EDIT OPERATION.');
+                            setActiveTab('manage-blog');
+                          }}
+                          className="py-1 px-2.5 border border-black bg-red-500 hover:bg-black text-white hover:text-red-500 rounded text-[9px] uppercase font-mono font-black cursor-pointer shadow-[1px_1px_0px_0px_#000]"
+                        >
+                          CANCEL EDIT
+                        </button>
+                      )}
+                    </div>
                     <input 
                       type="text" 
                       value={title}
@@ -839,7 +1148,7 @@ export default function Admin() {
                   className="te-button py-3 px-6 bg-neo-green border-black text-black font-black uppercase text-xs hover:bg-neo-yellow hover:text-black flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-[3px_3px_0px_0px_#000]"
                 >
                   <Send size={14} />
-                  {isPublishing ? 'SYNCHRONIZING...' : (activeTab === 'blog' ? 'COMMIT DISPATCH' : 'COMMIT CAPTURES')}
+                  {isPublishing ? 'SYNCHRONIZING...' : (editingPostId ? 'UPDATE TRANS-LOG' : (activeTab === 'blog' ? 'COMMIT DISPATCH' : 'COMMIT CAPTURES'))}
                 </button>
               </div>
             </motion.form>
