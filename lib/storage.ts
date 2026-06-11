@@ -1,132 +1,123 @@
-import {
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  orderBy,
-  Timestamp,
-} from 'firebase/firestore';
-import { getDb } from './firebase';
+import { Post, Photo, Skill, mockPosts, mockPhotos, cvSkills } from './data';
 
-export interface Post {
-  id: string;
-  title: string;
-  content: string;
-  imageUrl?: string;
-  createdAt: string;
-  authorId: string;
-}
+// Helper to check client environment
+const isClient = typeof window !== 'undefined';
 
-export interface Photo {
-  id: string;
-  url: string;
-  title: string;
-  description?: string;
-  createdAt: string;
-}
-
-// --- Firestore CRUD ---
-
-export const fetchAllPosts = async (): Promise<Post[]> => {
+export const fetchAllPosts = (): Post[] => {
+  if (!isClient) return mockPosts;
   try {
-    const db = getDb();
-    const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => {
-      const data = d.data();
-      return {
-        id: d.id,
-        title: data.title,
-        content: data.content,
-        imageUrl: data.imageUrl || undefined,
-        createdAt: data.createdAt instanceof Timestamp
-          ? data.createdAt.toDate().toISOString()
-          : data.createdAt,
-        authorId: data.authorId,
-      };
-    });
+    const localPostsStr = localStorage.getItem('portfolio_posts');
+    if (!localPostsStr) {
+      // Initialize if empty
+      localStorage.setItem('portfolio_posts', JSON.stringify(mockPosts));
+      return mockPosts;
+    }
+    return JSON.parse(localPostsStr);
   } catch (error) {
-    console.error('Failed to fetch posts:', error);
-    return [];
+    console.error('Failed to fetch posts from localstorage:', error);
+    return mockPosts;
   }
 };
 
-export const fetchAllPhotos = async (): Promise<Photo[]> => {
-  try {
-    const db = getDb();
-    const q = query(collection(db, 'photos'), orderBy('createdAt', 'desc'));
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => {
-      const data = d.data();
-      return {
-        id: d.id,
-        url: data.url,
-        title: data.title,
-        description: data.description || undefined,
-        createdAt: data.createdAt instanceof Timestamp
-          ? data.createdAt.toDate().toISOString()
-          : data.createdAt,
-      };
-    });
-  } catch (error) {
-    console.error('Failed to fetch photos:', error);
-    return [];
+export const savePost = (post: Omit<Post, 'id' | 'createdAt'>): Post => {
+  if (!isClient) {
+    throw new Error('Can only save post on client side');
   }
-};
-
-export const savePost = async (
-  post: Omit<Post, 'id' | 'createdAt'>
-): Promise<Post> => {
-  const db = getDb();
-  // Strip undefined fields – Firestore rejects them
-  const cleanPost = Object.fromEntries(
-    Object.entries(post).filter(([, v]) => v !== undefined)
-  );
-  const docRef = await addDoc(collection(db, 'posts'), {
-    ...cleanPost,
-    createdAt: Timestamp.now(),
-  });
-  return {
+  const all = fetchAllPosts();
+  const newPost: Post = {
     ...post,
-    id: docRef.id,
+    id: Math.random().toString(36).substring(2, 9),
     createdAt: new Date().toISOString(),
   };
+  const updated = [newPost, ...all];
+  localStorage.setItem('portfolio_posts', JSON.stringify(updated));
+  return newPost;
 };
 
-export const deletePost = async (id: string): Promise<void> => {
-  const db = getDb();
-  await deleteDoc(doc(db, 'posts', id));
+export const deletePost = (id: string): void => {
+  if (!isClient) return;
+  const all = fetchAllPosts();
+  const updated = all.filter(p => p.id !== id);
+  localStorage.setItem('portfolio_posts', JSON.stringify(updated));
 };
 
-export const savePhoto = async (
-  photo: Omit<Photo, 'id' | 'createdAt'>
-): Promise<Photo> => {
-  const db = getDb();
-  const docRef = await addDoc(collection(db, 'photos'), {
+export const fetchAllPhotos = (): Photo[] => {
+  if (!isClient) return mockPhotos;
+  try {
+    const localPhotosStr = localStorage.getItem('portfolio_photos');
+    if (!localPhotosStr) {
+      localStorage.setItem('portfolio_photos', JSON.stringify(mockPhotos));
+      return mockPhotos;
+    }
+    return JSON.parse(localPhotosStr);
+  } catch (error) {
+    console.error('Failed to fetch photos from localstorage:', error);
+    return mockPhotos;
+  }
+};
+
+export const savePhoto = (photo: Omit<Photo, 'id' | 'createdAt'>): Photo => {
+  if (!isClient) {
+    throw new Error('Can only save photo on client side');
+  }
+  const all = fetchAllPhotos();
+  const newPhoto: Photo = {
     ...photo,
-    createdAt: Timestamp.now(),
-  });
-  return {
-    ...photo,
-    id: docRef.id,
+    id: Math.random().toString(36).substring(2, 9),
     createdAt: new Date().toISOString(),
   };
+  const updated = [newPhoto, ...all];
+  localStorage.setItem('portfolio_photos', JSON.stringify(updated));
+  return newPhoto;
 };
 
-export const savePhotos = async (
-  newPhotos: Omit<Photo, 'id' | 'createdAt'>[]
-): Promise<Photo[]> => {
+export const savePhotos = (newPhotos: Omit<Photo, 'id' | 'createdAt'>[]): Photo[] => {
   const results: Photo[] = [];
   for (const photo of newPhotos) {
-    const saved = await savePhoto(photo);
+    const saved = savePhoto(photo);
     results.push(saved);
   }
   return results;
 };
 
-export const deletePhoto = async (id: string): Promise<void> => {
-  const db = getDb();
-  await deleteDoc(doc(db, 'photos', id));
+export const deletePhoto = (id: string): void => {
+  if (!isClient) return;
+  const all = fetchAllPhotos();
+  const updated = all.filter(p => p.id !== id);
+  localStorage.setItem('portfolio_photos', JSON.stringify(updated));
+};
+
+export const fetchAllSkills = (): Skill[] => {
+  if (!isClient) return cvSkills;
+  try {
+    const localSkillsStr = localStorage.getItem('portfolio_skills');
+    if (!localSkillsStr) {
+      localStorage.setItem('portfolio_skills', JSON.stringify(cvSkills));
+      return cvSkills;
+    }
+    return JSON.parse(localSkillsStr);
+  } catch (error) {
+    console.error('Failed to fetch skills from localstorage:', error);
+    return cvSkills;
+  }
+};
+
+export const saveSkill = (skill: Skill): Skill => {
+  if (!isClient) {
+    throw new Error('Can only save skill on client side');
+  }
+  const all = fetchAllSkills();
+  if (all.some(s => s.label.toLowerCase() === skill.label.toLowerCase())) {
+    throw new Error('Skill already exists');
+  }
+  const updated = [...all, skill];
+  localStorage.setItem('portfolio_skills', JSON.stringify(updated));
+  return skill;
+};
+
+export const deleteSkill = (label: string): void => {
+  if (!isClient) return;
+  const all = fetchAllSkills();
+  const updated = all.filter(s => s.label.toLowerCase() !== label.toLowerCase());
+  localStorage.setItem('portfolio_skills', JSON.stringify(updated));
 };

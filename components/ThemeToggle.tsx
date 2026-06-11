@@ -9,7 +9,9 @@ export function ThemeToggle() {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true);
+    Promise.resolve().then(() => {
+      setMounted(true);
+    });
   }, []);
 
   if (!mounted) {
@@ -19,10 +21,10 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="p-2 rounded-full bg-ink/5 hover:bg-ink/10 dark:bg-bg/10 dark:hover:bg-bg/20 transition-colors"
+      className="p-2 border-2 border-line bg-neo-cyan text-black rounded-md shadow-[2px_2px_0px_0px_var(--line)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_var(--line)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all duration-100 cursor-pointer"
       aria-label="Toggle theme"
     >
-      {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+      {theme === 'dark' ? <Sun size={18} className="text-black" /> : <Moon size={18} className="text-black" />}
     </button>
   );
 }

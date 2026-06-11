@@ -22,10 +22,12 @@ export function extractDataImages(content: string) {
  * extracted data image placeholders back to actual data URLs.
  */
 export function createImgRenderer(images: Record<string, string>) {
-  return ({ src, alt }: any) => {
+  const ImgRenderer = ({ src, alt }: any) => {
     const resolvedSrc = (src && images[src]) || src;
     if (!resolvedSrc) return null;
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={resolvedSrc} alt={alt || ''} className="rounded-xl max-w-full" />;
   };
+  ImgRenderer.displayName = 'ImgRenderer';
+  return ImgRenderer;
 }

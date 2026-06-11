@@ -3,10 +3,6 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { NavLinks } from '@/components/NavLinks';
-import { MobileMenu } from '@/components/MobileMenu';
-import { InteractiveBackground } from '@/components/InteractiveBackground';
-import { Home } from 'lucide-react';
 import './globals.css';
 
 const inter = Inter({
@@ -41,32 +37,26 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col relative overflow-x-hidden">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <InteractiveBackground />
-          <header className="sticky top-0 z-50 bg-bg/80 backdrop-blur-md te-border-b">
-            <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-              <Link href="/" className="group flex items-center justify-center p-2 rounded-lg bg-ink/5 hover:bg-ink/10 transition-colors">
-                <Home size={24} className="text-ink group-hover:text-accent-orange transition-colors" />
-              </Link>
-              <NavLinks />
-              <div className="flex items-center gap-4">
-                <ThemeToggle />
-                <Link href="/admin" className="te-button hidden md:inline-flex">
-                  Admin
-                </Link>
-                <MobileMenu />
-              </div>
-            </div>
-          </header>
-          <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-12">
+          <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 md:px-8 lg:px-10 py-12">
             {children}
           </main>
+          {/* Floating Theme Toggle */}
+          <div className="fixed bottom-6 right-6 z-50">
+            <ThemeToggle />
+          </div>
+          {/* Admin panel quick link in footer */}
           <footer className="te-border-t py-8 mt-auto bg-bg/50 backdrop-blur-sm">
-            <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="max-w-screen-2xl mx-auto px-4 md:px-8 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="te-label">© {new Date().getFullYear()} All rights reserved.</p>
-              <p className="te-label flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-accent-orange animate-pulse"></span>
-                Rishi Mihir Popat
-              </p>
+              <div className="flex items-center gap-6">
+                <Link href="/admin" className="font-mono text-xs font-black uppercase text-neo-pink hover:underline">
+                  SYSTEM_AUTH_PORT
+                </Link>
+                <p className="te-label flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-accent-orange animate-pulse"></span>
+                  Rishi Mihir Popat
+                </p>
+              </div>
             </div>
           </footer>
         </ThemeProvider>

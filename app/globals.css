@@ -9,25 +9,46 @@
   --color-accent-orange: var(--accent);
   --color-glass: var(--glass);
   
+  --color-neo-yellow: var(--neo-yellow);
+  --color-neo-orange: var(--neo-orange);
+  --color-neo-green: var(--neo-green);
+  --color-neo-cyan: var(--neo-cyan);
+  --color-neo-pink: var(--neo-pink);
+  --color-neo-purple: var(--neo-purple);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
 }
 
 @layer base {
   :root {
-    --bg: #fafafa;
-    --ink: #171717;
-    --line: rgba(0, 0, 0, 0.1);
-    --accent: #3b82f6; /* Modern blue */
-    --glass: rgba(255, 255, 255, 0.7);
+    --bg: #a3a3a3; /* Concrete Grey */
+    --ink: #000000;
+    --line: #000000;
+    --accent: #ff4500; /* Safety Orange */
+    --glass: #e5e5e5; /* Light Concrete */
+    
+    --neo-yellow: #ffcc00; /* Hazard Yellow */
+    --neo-orange: #ff5500; /* Industrial Orange */
+    --neo-green: #00e676;
+    --neo-cyan: #00f0ff;
+    --neo-pink: #ff0055;
+    --neo-purple: #8a2be2;
   }
 
   .dark {
-    --bg: #0a0a0a;
-    --ink: #ededed;
-    --line: rgba(255, 255, 255, 0.1);
-    --accent: #60a5fa;
-    --glass: rgba(0, 0, 0, 0.5);
+    --bg: #262626; /* Dark Concrete */
+    --ink: #ffffff;
+    --line: #ffffff;
+    --accent: #ff5500;
+    --glass: #1c1c1c; /* Charcoal Concrete */
+    
+    --neo-yellow: #ffcc00;
+    --neo-orange: #ff6a00;
+    --neo-green: #39ff14;
+    --neo-cyan: #00f0ff;
+    --neo-pink: #ff2a75;
+    --neo-purple: #a04ef6;
   }
 
   body {
@@ -36,7 +57,26 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    
+    /* Concrete slabs texture */
+    background-image: 
+      /* Concrete panel lines */
+      linear-gradient(rgba(0,0,0,0.3) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(0,0,0,0.3) 2px, transparent 2px),
+      /* Concrete pores and speckles */
+      radial-gradient(rgba(0,0,0,0.15) 1.5px, transparent 0),
+      radial-gradient(rgba(255,255,255,0.08) 1.5px, transparent 0);
+    background-size: 120px 120px, 120px 120px, 16px 16px, 24px 24px;
+    background-position: 0 0, 0 0, 0 0, 8px 8px;
+  }
+
+  .dark body {
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.08) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(255,255,255,0.08) 2px, transparent 2px),
+      radial-gradient(rgba(0,0,0,0.4) 1.5px, transparent 0),
+      radial-gradient(rgba(255,255,255,0.05) 1.5px, transparent 0);
   }
 
   html {
@@ -44,143 +84,178 @@
   }
 
   ::selection {
-    background-color: var(--accent);
-    color: #fff;
+    background-color: var(--neo-yellow);
+    color: #000;
   }
 
-  /* Focus visible for accessibility */
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 5px solid var(--neo-orange);
     outline-offset: 2px;
   }
 
-  /* Scrollbar styling */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 16px;
+    height: 16px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: var(--bg);
+    border-left: 4px solid var(--line);
+    /* Gritty track pattern */
+    background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 4px);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--line);
-    border-radius: 3px;
+    background: var(--neo-yellow);
+    border: 4px solid var(--line);
+    box-shadow: inset -2px -2px 0px 0px rgba(0,0,0,0.5);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: var(--neo-orange);
   }
 
-  /* Interactive elements */
+  /* Neo-Brutalist Concrete utility classes */
   .te-button {
-    border: 1px solid var(--line);
-    border-radius: 9999px;
-    padding: 10px 24px;
-    font-family: var(--font-sans);
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    border: 4px solid var(--line);
+    border-radius: 4px; /* Harder corners */
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 950;
+    text-transform: uppercase;
+    transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     background: var(--glass);
-    backdrop-filter: blur(10px);
     color: var(--ink);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-shadow: 6px 6px 0px 0px var(--line);
   }
 
   .te-button:hover {
-    background: var(--ink);
-    color: var(--bg);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -10px var(--ink);
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0px 0px var(--line);
+  }
+
+  .te-button:active {
+    transform: translate(3px, 3px);
+    box-shadow: 3px 3px 0px 0px var(--line);
   }
 
   .te-button-accent {
-    background: var(--ink);
-    color: var(--bg);
-    border-color: transparent;
+    background: var(--neo-yellow);
+    color: #000000;
   }
 
   .te-button-accent:hover {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 10px 20px -10px var(--accent);
+    background: var(--neo-orange);
+    color: #ffffff;
   }
 
-  /* Pill tags */
   .te-pill {
-    border: 1px solid var(--line);
-    border-radius: 9999px;
-    padding: 6px 16px;
+    border: 3px solid var(--line);
+    border-radius: 4px; /* Harder corners */
+    padding: 6px 14px;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
     background: var(--glass);
-    backdrop-filter: blur(10px);
+    color: var(--ink);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 3px 3px 0px 0px var(--line);
   }
 
   .te-pill:hover {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: var(--bg);
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0px 0px var(--line);
   }
 
-  /* Cards */
   .te-card {
-    border: 1px solid var(--line);
+    border: 4px solid var(--line);
     background: var(--glass);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 6px; /* Blocky grit */
+    box-shadow: 8px 8px 0px 0px var(--line);
+    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
   }
 
   .te-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.2);
+    transform: translate(-5px, -5px);
+    box-shadow: 13px 13px 0px 0px var(--line);
   }
 
-  .dark .te-card:hover {
-    box-shadow: 0 20px 40px -20px rgba(255, 255, 255, 0.1);
-  }
-
-  /* Borders */
   .te-border {
-    border: 1px solid var(--line);
+    border: 4px solid var(--line);
   }
   
   .te-border-b {
-    border-bottom: 1px solid var(--line);
+    border-bottom: 4px solid var(--line);
   }
 
   .te-border-r {
-    border-right: 1px solid var(--line);
+    border-right: 4px solid var(--line);
   }
   
   .te-border-t {
-    border-top: 1px solid var(--line);
+    border-top: 4px solid var(--line);
   }
 
-  /* Typography */
   .te-heading {
     font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: -0.04em;
+    font-weight: 1000;
+    letter-spacing: -0.06em;
+    text-transform: uppercase;
   }
 
   .te-label {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 900;
     text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Industrial Hazard Stripes Utility */
+  .hazard-stripes {
+    background: repeating-linear-gradient(
+      -45deg,
+      #000000,
+      #000000 12px,
+      var(--neo-yellow) 12px,
+      var(--neo-yellow) 24px
+    );
+    border-bottom: 4px solid var(--line);
+  }
+
+  .dark .hazard-stripes {
+    background: repeating-linear-gradient(
+      -45deg,
+      #000000,
+      #000000 12px,
+      #ffcc00 12px,
+      #ffcc00 24px
+    );
+  }
+
+  /* Concrete stamp badge */
+  .industrial-stamp {
+    font-family: var(--font-mono);
+    font-weight: 950;
+    text-transform: uppercase;
+    border: 3px dashed var(--neo-pink);
+    color: var(--neo-pink);
+    padding: 2px 8px;
+    font-size: 10px;
     letter-spacing: 0.1em;
-    opacity: 0.6;
+    transform: rotate(-4deg);
+    display: inline-block;
+    background: transparent;
   }
 }
