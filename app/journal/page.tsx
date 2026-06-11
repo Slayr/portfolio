@@ -22,7 +22,7 @@ export default function JournalPage() {
   return (
     <div className="space-y-10 min-h-screen pb-12">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-4 border-black p-6 bg-glass shadow-[8px_8px_0px_0px_#000] rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-4 border-line p-6 bg-glass shadow-[8px_8px_0px_0px_var(--line)] rounded-xl">
         <div className="flex items-center gap-3">
           <BookOpen size={32} className="text-neo-pink animate-pulse" />
           <div>
@@ -36,7 +36,7 @@ export default function JournalPage() {
         </div>
         <Link 
           href="/" 
-          className="self-start sm:self-auto font-mono text-xs font-black uppercase bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow px-4 py-2.5 border-3 border-black rounded shadow-[4px_4px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
+          className="self-start sm:self-auto font-mono text-xs font-black uppercase bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow px-4 py-2.5 border-3 border-line rounded shadow-[4px_4px_0px_0px_var(--line)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
         >
           <ArrowLeft size={14} /> BACK_TO_DASHBOARD
         </Link>
@@ -51,11 +51,11 @@ export default function JournalPage() {
             <div
               key={`post-${post.id}`}
               onClick={() => setSelectedPost(post)}
-              className={`te-card p-6 border-3 border-black shadow-[6px_6px_0px_0px_#000] hover:-translate-y-1.5 hover:shadow-[8px_8px_0px_0px_#000] transition-all cursor-pointer rounded-xl flex flex-col justify-between min-h-[250px] ${colorClass} ${rotation}`}
+              className={`te-card p-6 border-3 border-line shadow-[6px_6px_0px_0px_var(--line)] hover:-translate-y-1.5 hover:shadow-[8px_8px_0px_0px_var(--line)] transition-all cursor-pointer rounded-xl flex flex-col justify-between min-h-[250px] ${colorClass} ${rotation}`}
             >
               <div>
                 <div className="flex justify-between items-center pb-2 border-b border-white/20">
-                  <span className="font-mono text-[10px] font-black bg-black text-white px-2.5 py-0.5 rounded border border-black shadow-[1.5px_1.5px_0px_0px_#fff]">
+                  <span className="font-mono text-[10px] font-black bg-black text-white px-2.5 py-0.5 rounded border border-line shadow-[1.5px_1.5px_0px_0px_#fff]">
                     LOG_0{idx + 1}
                   </span>
                   <span className="font-mono text-[9px] font-bold opacity-80">

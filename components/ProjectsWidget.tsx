@@ -40,7 +40,7 @@ function getLanguagesForRepo(repo: Repo): string[] {
 
 export function ProjectsWidget({ repos, onSelectRepo }: ProjectsWidgetProps) {
   return (
-    <div id="projects-widget" className="md:col-span-4 te-card p-6 bg-glass text-ink flex flex-col justify-between relative border-4 border-black shadow-[8px_8px_0px_0px_#000]">
+    <div id="projects-widget" className="md:col-span-4 te-card p-6 bg-glass text-ink flex flex-col justify-between relative border-4 border-line shadow-[8px_8px_0px_0px_var(--line)]">
       <div className="flex items-center justify-between border-b-3 border-line pb-4 mb-6">
         <h2 className="text-2xl font-black tracking-tight uppercase flex items-center gap-2">
           <Github size={28} className="text-neo-pink animate-spin-slow" />
@@ -53,7 +53,7 @@ export function ProjectsWidget({ repos, onSelectRepo }: ProjectsWidgetProps) {
           <div 
             key={repo.id}
             onClick={() => onSelectRepo(repo)}
-            className="p-5 border-3 border-black bg-bg hover:bg-neo-yellow hover:text-black hover:-translate-x-1.5 hover:-translate-y-1.5 hover:shadow-[4px_4px_0px_0px_#000] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all duration-150 cursor-pointer rounded-lg flex flex-col justify-between h-48"
+            className="p-5 border-3 border-line bg-bg hover:bg-neo-yellow hover:text-black hover:-translate-x-1.5 hover:-translate-y-1.5 hover:shadow-[4px_4px_0px_0px_var(--line)] active:translate-x-0 active:translate-y-0 active:shadow-none transition-all duration-150 cursor-pointer rounded-lg flex flex-col justify-between h-48"
           >
             <div className="space-y-2">
               <h3 className="font-sans font-black text-base uppercase truncate">{repo.name}</h3>
@@ -61,9 +61,9 @@ export function ProjectsWidget({ repos, onSelectRepo }: ProjectsWidgetProps) {
                 {repo.description || 'No description available.'}
               </p>
             </div>
-            <div className="flex flex-wrap gap-1 mt-4 border-t border-black/10 pt-3">
+            <div className="flex flex-wrap gap-1 mt-4 border-t border-line/20 pt-3">
               {getLanguagesForRepo(repo).map((lang) => (
-                <span key={lang} className="te-pill py-0.5 px-1.5 text-[8px] font-black bg-black text-white border-black shadow-none">
+                <span key={lang} className="te-pill py-0.5 px-1.5 text-[8px] font-black bg-black text-white border-line shadow-none">
                   {lang}
                 </span>
               ))}

@@ -41,7 +41,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col relative overflow-x-hidden">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} themes={['light', 'dark', 'colorful']}>
           <main className="flex-1 max-w-screen-2xl mx-auto w-full px-4 md:px-8 lg:px-10 py-12">
             {children}
           </main>

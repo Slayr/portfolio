@@ -22,32 +22,62 @@
 
 @layer base {
   :root {
-    --bg: #a3a3a3; /* Concrete Grey */
-    --ink: #000000;
-    --line: #000000;
-    --accent: #ff4500; /* Safety Orange */
-    --glass: #e5e5e5; /* Light Concrete */
+    --bg: #f8fafc; /* Classic Light Bg */
+    --ink: #0f172a; /* Slate 900 */
+    --line: #cbd5e1; /* Slate 300 */
+    --accent: #3b82f6; /* Blue 500 */
+    --glass: #ffffff;
     
-    --neo-yellow: #ffcc00; /* Hazard Yellow */
-    --neo-orange: #ff5500; /* Industrial Orange */
-    --neo-green: #00e676;
-    --neo-cyan: #00f0ff;
-    --neo-pink: #ff0055;
-    --neo-purple: #8a2be2;
+    --neo-yellow: #fef08a; /* Muted yellow */
+    --neo-orange: #f97316; /* Muted orange */
+    --neo-green: #10b981; /* Muted green */
+    --neo-cyan: #0ea5e9; /* Muted cyan */
+    --neo-pink: #ec4899; /* Muted pink */
+    --neo-purple: #8b5cf6; /* Muted purple */
+  }
+
+  .light {
+    --bg: #f8fafc;
+    --ink: #0f172a;
+    --line: #cbd5e1;
+    --accent: #3b82f6;
+    --glass: #ffffff;
+    
+    --neo-yellow: #fef08a;
+    --neo-orange: #f97316;
+    --neo-green: #10b981;
+    --neo-cyan: #0ea5e9;
+    --neo-pink: #ec4899;
+    --neo-purple: #8b5cf6;
   }
 
   .dark {
-    --bg: #262626; /* Dark Concrete */
+    --bg: #0f172a; /* Classic Dark Bg */
+    --ink: #f8fafc; /* Slate 50 */
+    --line: #334155; /* Slate 700 */
+    --accent: #60a5fa; /* Blue 400 */
+    --glass: #1e293b; /* Slate 800 */
+    
+    --neo-yellow: #eab308; /* Amber 500 */
+    --neo-orange: #ea580c; /* Orange 600 */
+    --neo-green: #059669; /* Emerald 600 */
+    --neo-cyan: #0284c7; /* Sky 600 */
+    --neo-pink: #db2777; /* Pink 600 */
+    --neo-purple: #7c3aed; /* Violet 600 */
+  }
+
+  .colorful {
+    --bg: #262626; /* Dark Concrete Bg */
     --ink: #ffffff;
     --line: #ffffff;
     --accent: #ff5500;
     --glass: #1c1c1c; /* Charcoal Concrete */
     
-    --neo-yellow: #ffcc00;
+    --neo-yellow: #ffcc00; /* Bright Hazard Yellow */
     --neo-orange: #ff6a00;
-    --neo-green: #39ff14;
-    --neo-cyan: #00f0ff;
-    --neo-pink: #ff2a75;
+    --neo-green: #39ff14; /* Neon Green */
+    --neo-cyan: #00f0ff; /* Neon Cyan */
+    --neo-pink: #ff2a75; /* Neon Pink */
     --neo-purple: #a04ef6;
   }
 
@@ -58,25 +88,19 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     transition: background-color 0.2s ease, color 0.2s ease;
-    
+  }
+
+  .colorful body {
     /* Concrete slabs texture */
     background-image: 
       /* Concrete panel lines */
-      linear-gradient(rgba(0,0,0,0.3) 2px, transparent 2px),
-      linear-gradient(90deg, rgba(0,0,0,0.3) 2px, transparent 2px),
-      /* Concrete pores and speckles */
-      radial-gradient(rgba(0,0,0,0.15) 1.5px, transparent 0),
-      radial-gradient(rgba(255,255,255,0.08) 1.5px, transparent 0);
-    background-size: 120px 120px, 120px 120px, 16px 16px, 24px 24px;
-    background-position: 0 0, 0 0, 0 0, 8px 8px;
-  }
-
-  .dark body {
-    background-image: 
       linear-gradient(rgba(255,255,255,0.08) 2px, transparent 2px),
       linear-gradient(90deg, rgba(255,255,255,0.08) 2px, transparent 2px),
+      /* Concrete pores and speckles */
       radial-gradient(rgba(0,0,0,0.4) 1.5px, transparent 0),
       radial-gradient(rgba(255,255,255,0.05) 1.5px, transparent 0);
+    background-size: 120px 120px, 120px 120px, 16px 16px, 24px 24px;
+    background-position: 0 0, 0 0, 0 0, 8px 8px;
   }
 
   html {

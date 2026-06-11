@@ -17,8 +17,8 @@ export function JournalFeedWidget({ posts, onSelectPost }: JournalFeedWidgetProp
   );
 
   return (
-    <div id="journal-feed-widget" className="md:col-span-4 te-card p-6 bg-glass border-4 border-black text-ink flex flex-col justify-between relative shadow-[8px_8px_0px_0px_#000] overflow-hidden">
-      <div className="flex items-center justify-between border-b-3 border-black pb-4 mb-6 gap-2">
+    <div id="journal-feed-widget" className="md:col-span-4 te-card p-6 bg-glass border-4 border-line text-ink flex flex-col justify-between relative shadow-[8px_8px_0px_0px_var(--line)] overflow-hidden">
+      <div className="flex items-center justify-between border-b-3 border-line pb-4 mb-6 gap-2">
         <h2 className="text-sm sm:text-lg md:text-2xl font-black uppercase tracking-tight flex items-center gap-2 min-w-0">
           <BookOpen size={20} className="text-neo-pink animate-pulse shrink-0" />
           <span className="truncate">JOURNAL DISPATCHES</span>
@@ -26,11 +26,11 @@ export function JournalFeedWidget({ posts, onSelectPost }: JournalFeedWidgetProp
         <div className="flex items-center gap-2 shrink-0">
           <Link 
             href="/journal" 
-            className="font-mono text-[9px] md:text-xs font-black uppercase bg-neo-pink text-white hover:bg-black hover:text-neo-pink px-2.5 py-1.5 border-2 border-black rounded shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+            className="font-mono text-[9px] md:text-xs font-black uppercase bg-neo-pink text-white hover:bg-black hover:text-neo-pink px-2.5 py-1.5 border-2 border-line rounded shadow-[2px_2px_0px_0px_var(--line)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
           >
             VIEW ALL →
           </Link>
-          <span className="font-mono text-[9px] font-black uppercase bg-black text-white px-2.5 py-1 border border-black rounded shadow-[2px_2px_0px_0px_var(--neo-pink)] hidden sm:inline-block">
+          <span className="font-mono text-[9px] font-black uppercase bg-black text-white px-2.5 py-1 border border-line rounded shadow-[2px_2px_0px_0px_var(--neo-pink)] hidden sm:inline-block">
             LOGS_ACTIVE
           </span>
         </div>
@@ -44,11 +44,11 @@ export function JournalFeedWidget({ posts, onSelectPost }: JournalFeedWidgetProp
             <div
               key={`post-${post.id}`}
               onClick={() => onSelectPost(post)}
-              className={`snap-align-start shrink-0 w-80 p-5 border-3 border-black shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] transition-all cursor-pointer rounded-md flex flex-col justify-between ${colorClass} ${rotation}`}
+              className={`snap-align-start shrink-0 w-80 p-5 border-3 border-line shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--line)] transition-all cursor-pointer rounded-md flex flex-col justify-between ${colorClass} ${rotation}`}
             >
               <div>
                 <div className="flex justify-between items-center">
-                  <span className="font-mono text-[9px] font-black bg-black text-white px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_0px_#fff]">
+                  <span className="font-mono text-[9px] font-black bg-black text-white px-2 py-0.5 rounded border border-line shadow-[1px_1px_0px_0px_#fff]">
                     LOG_0{idx + 1}
                   </span>
                   <span className="font-mono text-[8px] font-bold opacity-80">

@@ -54,7 +54,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
         {/* Floating Close Button (Top Right) */}
         <button
           onClick={onClose}
-          className="fixed top-6 right-6 p-3 bg-neo-pink text-white hover:bg-white hover:text-black border-3 border-black rounded-full shadow-[4px_4px_0px_0px_#000] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
+          className="fixed top-6 right-6 p-3 bg-neo-pink text-white hover:bg-white hover:text-black border-3 border-line rounded-full shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
           aria-label="Close viewer"
         >
           <X size={20} />
@@ -63,7 +63,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
         {/* Floating Left Arrow (Center Left) */}
         <button
           onClick={handlePrev}
-          className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 bg-neutral-950 hover:bg-neo-yellow text-white hover:text-black border-3 border-black rounded-full shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
+          className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 bg-neutral-950 hover:bg-neo-yellow text-white hover:text-black border-3 border-line rounded-full shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
           aria-label="Previous photo"
         >
           <ChevronLeft size={24} />
@@ -81,7 +81,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={{ duration: 0.2 }}
-                className="relative border-4 border-black rounded-xl shadow-[12px_12px_0px_0px_#000] overflow-hidden bg-neutral-950"
+                className="relative border-4 border-line rounded-xl shadow-[12px_12px_0px_0px_var(--line)] overflow-hidden bg-neutral-950"
               >
                 {/* Subtle Scanline CRT Overlay */}
                 <div className="absolute inset-0 bg-scanlines pointer-events-none opacity-5"></div>
@@ -97,7 +97,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
           </div>
 
           {/* Right Panel: Metadata Sidebar */}
-          <div className="w-full md:w-80 bg-neutral-950 text-white p-5 border-3 border-black rounded-xl shadow-[6px_6px_0px_0px_#000] text-left flex flex-col justify-between shrink-0 gap-4">
+          <div className="w-full md:w-80 bg-neutral-950 text-white p-5 border-3 border-line rounded-xl shadow-[6px_6px_0px_0px_var(--line)] text-left flex flex-col justify-between shrink-0 gap-4">
             <div className="space-y-4">
               <div className="border-b border-neutral-850 pb-3">
                 <span className="font-mono text-[9px] text-neo-cyan font-black uppercase tracking-wider block mb-1">
@@ -143,7 +143,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
               </span>
               <button 
                 onClick={onClose}
-                className="w-full py-2 px-4 border-2 border-black bg-neo-pink text-white rounded font-mono font-black text-[10px] uppercase tracking-wider shadow-[3px_3px_0px_0px_#000] hover:bg-white hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full py-2 px-4 border-2 border-line bg-neo-pink text-white rounded font-mono font-black text-[10px] uppercase tracking-wider shadow-[3px_3px_0px_0px_var(--line)] hover:bg-white hover:text-black active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <X size={12} /> CLOSE_VIEW
               </button>
@@ -155,7 +155,7 @@ export function PhotoLightbox({ photo, photos, onClose, onNavigate }: PhotoLight
         {/* Floating Right Arrow (Center Right) */}
         <button
           onClick={handleNext}
-          className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 bg-neutral-950 hover:bg-neo-yellow text-white hover:text-black border-3 border-black rounded-full shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
+          className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 bg-neutral-950 hover:bg-neo-yellow text-white hover:text-black border-3 border-line rounded-full shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-1 active:translate-y-0 active:shadow-none transition-all z-[110] cursor-pointer"
           aria-label="Next photo"
         >
           <ChevronRight size={24} />

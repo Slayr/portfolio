@@ -33,7 +33,7 @@ export function SkillsWidget({ skills, skillQuery, setSkillQuery }: SkillsWidget
 
   return (
     <div id="skills-widget" className="md:col-span-2 te-card bg-glass text-ink flex flex-col relative overflow-hidden">
-      <div className="p-4 border-b-3 border-black bg-neo-pink text-white flex items-center justify-between shrink-0">
+      <div className="p-4 border-b-3 border-line bg-neo-pink text-white flex items-center justify-between shrink-0">
         <h3 className="font-mono font-black text-xs uppercase tracking-wider flex items-center gap-2">
           <Network size={16} /> Skills Arena
         </h3>
@@ -43,7 +43,7 @@ export function SkillsWidget({ skills, skillQuery, setSkillQuery }: SkillsWidget
             value={skillQuery}
             onChange={(e) => setSkillQuery(e.target.value)}
             placeholder="HIGHLIGHT SKILL..."
-            className="bg-white text-black border-2 border-black text-[9px] font-mono font-black px-2 py-1 placeholder-black/60 focus:outline-none rounded"
+            className="bg-white text-black border-2 border-line text-[9px] font-mono font-black px-2 py-1 placeholder-black/60 focus:outline-none rounded"
           />
         </div>
       </div>
@@ -54,9 +54,9 @@ export function SkillsWidget({ skills, skillQuery, setSkillQuery }: SkillsWidget
           return (
             <div
               key={skill.label}
-              className={`te-pill font-black uppercase transition-all duration-100 border-black ${pillPaddingClass} ${
+              className={`te-pill font-black uppercase transition-all duration-100 border-line ${pillPaddingClass} ${
                 matched 
-                  ? 'bg-neo-yellow text-black scale-110 shadow-[2px_2px_0px_0px_#000]'
+                  ? 'bg-neo-yellow text-black scale-110 shadow-[2px_2px_0px_0px_var(--line)]'
                   : 'bg-glass text-ink hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_var(--line)] active:translate-y-0 active:shadow-none'
               }`}
             >

@@ -16,8 +16,8 @@ export function PhotoFeedWidget({ photos, onSelectPhoto }: PhotoFeedWidgetProps)
   );
 
   return (
-    <div id="photo-feed-widget" className="md:col-span-4 te-card p-6 bg-glass border-4 border-black text-ink flex flex-col justify-between relative shadow-[8px_8px_0px_0px_#000] overflow-hidden">
-      <div className="flex items-center justify-between border-b-3 border-black pb-4 mb-6 gap-2">
+    <div id="photo-feed-widget" className="md:col-span-4 te-card p-6 bg-glass border-4 border-line text-ink flex flex-col justify-between relative shadow-[8px_8px_0px_0px_var(--line)] overflow-hidden">
+      <div className="flex items-center justify-between border-b-3 border-line pb-4 mb-6 gap-2">
         <h2 className="text-sm sm:text-lg md:text-2xl font-black uppercase tracking-tight flex items-center gap-2 min-w-0">
           <Camera size={20} className="text-neo-pink animate-pulse shrink-0" />
           <span className="truncate">OPTICAL ARCHIVES</span>
@@ -25,11 +25,11 @@ export function PhotoFeedWidget({ photos, onSelectPhoto }: PhotoFeedWidgetProps)
         <div className="flex items-center gap-2 shrink-0">
           <Link 
             href="/photos" 
-            className="font-mono text-[9px] md:text-xs font-black uppercase bg-neo-cyan text-black hover:bg-black hover:text-neo-cyan px-2.5 py-1.5 border-2 border-black rounded shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
+            className="font-mono text-[9px] md:text-xs font-black uppercase bg-neo-cyan text-black hover:bg-black hover:text-neo-cyan px-2.5 py-1.5 border-2 border-line rounded shadow-[2px_2px_0px_0px_var(--line)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
           >
             VIEW ALL →
           </Link>
-          <span className="font-mono text-[9px] font-black uppercase bg-black text-white px-2.5 py-1 border border-black rounded shadow-[2px_2px_0px_0px_var(--neo-pink)] hidden sm:inline-block">
+          <span className="font-mono text-[9px] font-black uppercase bg-black text-white px-2.5 py-1 border border-line rounded shadow-[2px_2px_0px_0px_var(--neo-pink)] hidden sm:inline-block">
             ARCHIVES_ACTIVE
           </span>
         </div>
@@ -44,16 +44,16 @@ export function PhotoFeedWidget({ photos, onSelectPhoto }: PhotoFeedWidgetProps)
             <div
               key={`photo-${photo.id}`}
               onClick={() => onSelectPhoto(photo)}
-              className={`snap-align-start shrink-0 w-64 p-3 border-3 border-black shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] transition-all cursor-pointer rounded-sm ${cardColor} ${rotation}`}
+              className={`snap-align-start shrink-0 w-64 p-3 border-3 border-line shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--line)] transition-all cursor-pointer rounded-sm ${cardColor} ${rotation}`}
             >
-              <div className="relative h-44 w-full overflow-hidden border-2 border-black bg-neutral-900">
+              <div className="relative h-44 w-full overflow-hidden border-2 border-line bg-neutral-900">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={photo.url} alt={photo.title} className="w-full h-full object-cover animate-fade-in" />
               </div>
               <div className="pt-3 flex flex-col justify-between items-start space-y-1 select-none">
                 <div className="flex justify-between items-center w-full">
                   <h4 className="font-sans font-black text-sm uppercase truncate max-w-[70%]">{photo.title}</h4>
-                  <span className={`font-mono text-[8px] font-black border-2 px-1.5 py-0.5 rounded ${stampColor} shadow-[1px_1px_0px_0px_#000]`}>
+                  <span className={`font-mono text-[8px] font-black border-2 px-1.5 py-0.5 rounded ${stampColor} shadow-[1px_1px_0px_0px_var(--line)]`}>
                     EXP_0{idx + 1}
                   </span>
                 </div>

@@ -21,7 +21,7 @@ export default function PhotosPage() {
   return (
     <div className="space-y-10 min-h-screen pb-12">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-4 border-black p-6 bg-glass shadow-[8px_8px_0px_0px_#000] rounded-xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-4 border-line p-6 bg-glass shadow-[8px_8px_0px_0px_var(--line)] rounded-xl">
         <div className="flex items-center gap-3">
           <Camera size={32} className="text-neo-pink animate-pulse" />
           <div>
@@ -35,7 +35,7 @@ export default function PhotosPage() {
         </div>
         <Link 
           href="/" 
-          className="self-start sm:self-auto font-mono text-xs font-black uppercase bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow px-4 py-2.5 border-3 border-black rounded shadow-[4px_4px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
+          className="self-start sm:self-auto font-mono text-xs font-black uppercase bg-neo-yellow text-black hover:bg-black hover:text-neo-yellow px-4 py-2.5 border-3 border-line rounded shadow-[4px_4px_0px_0px_var(--line)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer flex items-center gap-2"
         >
           <ArrowLeft size={14} /> BACK_TO_DASHBOARD
         </Link>
@@ -51,9 +51,9 @@ export default function PhotosPage() {
             <div
               key={`photo-${photo.id}`}
               onClick={() => setSelectedPhoto(photo)}
-              className={`w-full p-3 border-3 border-black shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] transition-all cursor-pointer rounded-sm ${cardColor} ${rotation}`}
+              className={`w-full p-3 border-3 border-line shadow-[4px_4px_0px_0px_var(--line)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--line)] transition-all cursor-pointer rounded-sm ${cardColor} ${rotation}`}
             >
-              <div className="relative w-full overflow-hidden border-2 border-black bg-neutral-900">
+              <div className="relative w-full overflow-hidden border-2 border-line bg-neutral-900">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={photo.url} 
@@ -64,13 +64,13 @@ export default function PhotosPage() {
               <div className="pt-3 flex flex-col justify-between items-start space-y-1 select-none">
                 <div className="flex justify-between items-center w-full">
                   <h4 className="font-sans font-black text-sm uppercase truncate max-w-[70%]">{photo.title}</h4>
-                  <span className={`font-mono text-[8px] font-black border-2 px-1.5 py-0.5 rounded ${stampColor} shadow-[1px_1px_0px_0px_#000]`}>
+                  <span className={`font-mono text-[8px] font-black border-2 px-1.5 py-0.5 rounded ${stampColor} shadow-[1px_1px_0px_0px_var(--line)]`}>
                     EXP_0{idx + 1}
                   </span>
                 </div>
                 <span className="font-mono text-[8px] font-bold opacity-85">DATE: {new Date(photo.createdAt).toLocaleDateString()}</span>
                 {photo.description && (
-                  <p className="font-sans text-[10px] opacity-75 mt-1 border-t border-black/10 pt-1 w-full italic truncate">
+                  <p className="font-sans text-[10px] opacity-75 mt-1 border-t border-line/20 pt-1 w-full italic truncate">
                     {photo.description}
                   </p>
                 )}
