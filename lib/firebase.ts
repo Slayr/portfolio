@@ -15,23 +15,35 @@ let app: FirebaseApp | null = null;
 let _db: Firestore | null = null;
 let _auth: Auth | null = null;
 
-function getApp(): FirebaseApp {
+export function isFirebaseConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
+    process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+  );
+}
+
+function getApp(): FirebaseApp | null {
+  if (!isFirebaseConfigured()) return null;
   if (!app) {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   }
   return app;
 }
 
-export function getDb(): Firestore {
+export function getDb(): Firestore | null {
+  const appInstance = getApp();
+  if (!appInstance) return null;
   if (!_db) {
-    _db = getFirestore(getApp());
+    _db = getFirestore(appInstance);
   }
   return _db;
 }
 
-export function getFirebaseAuth(): Auth {
+export function getFirebaseAuth(): Auth | null {
+  const appInstance = getApp();
+  if (!appInstance) return null;
   if (!_auth) {
-    _auth = getAuth(getApp());
+    _auth = getAuth(appInstance);
   }
   return _auth;
 }
