@@ -52,18 +52,18 @@
   }
 
   .dark {
-    --bg: #0f172a; /* Classic Dark Bg */
-    --ink: #f8fafc; /* Slate 50 */
-    --line: #334155; /* Slate 700 */
-    --accent: #60a5fa; /* Blue 400 */
-    --glass: #1e293b; /* Slate 800 */
+    --bg: #0b1220; /* Muted midnight */
+    --ink: #e2e8f0; /* Soft slate text */
+    --line: #334155; /* Subtle borders */
+    --accent: #7aa2c8; /* Desaturated blue accent */
+    --glass: #111b2d; /* Clean panel surface */
     
-    --neo-yellow: #eab308; /* Amber 500 */
-    --neo-orange: #ea580c; /* Orange 600 */
-    --neo-green: #059669; /* Emerald 600 */
-    --neo-cyan: #0284c7; /* Sky 600 */
-    --neo-pink: #db2777; /* Pink 600 */
-    --neo-purple: #7c3aed; /* Violet 600 */
+    --neo-yellow: #bfa46a; /* Muted sand */
+    --neo-orange: #b67c5a; /* Muted clay */
+    --neo-green: #5f8f82; /* Muted sage */
+    --neo-cyan: #5d8799; /* Muted steel cyan */
+    --neo-pink: #9a6f84; /* Muted mauve */
+    --neo-purple: #7d729f; /* Muted violet */
   }
 
   .colorful {
@@ -263,8 +263,8 @@
       -45deg,
       #000000,
       #000000 12px,
-      #ffcc00 12px,
-      #ffcc00 24px
+      var(--neo-yellow) 12px,
+      var(--neo-yellow) 24px
     );
   }
 
